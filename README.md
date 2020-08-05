@@ -10,8 +10,7 @@ To compute Hrj and other measures of association based on entropy check out the 
  
 Here we implement this computation in C and C++. Given a two-dimensional (2D) contingency table in the form of an integer array ‘nn[i][j]’, where i labels the x variable and ranges from 1 to ni, j labels the y variable and ranges from 1 to nj, this routine returns the entropy ‘h’ of the whole table, the entropy hx of the x distribution, the entropy hy of the y distribution, the entropy hygx of y given x, the entropy hxgy of x ‘given’ y, the dependency of uygx of y on x (equations above), the ‘dependency’ uxgy of x on y and the symmetrical dependency ‘uxy’. This code is heavily adapted off The Art of Scientific Computing Second Edition Page 633.
 
-## Response to reviewers 
-
+# Computing Significance of Supplementary Figure 5 (KS Test)
 
 > Effect of background selection on LD between S variants: this is interesting, and I think it merits further investigation, but Figure S5 does not convince me that the effect is real. Is the slight difference that is observed at d<500bp statistically significant?
 
