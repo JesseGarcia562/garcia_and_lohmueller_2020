@@ -25,7 +25,7 @@ sumj[j] += nn[i][j];
 for (i=1;i<=ni;i++)
 if (sumj[j]) {
 p=sumi[i]/sum;
-*hy -= p*log(p);
+*hx -= p*log(p);
 }
 /* Get the entropy of the y distribution /*
 *hy=0.0;
