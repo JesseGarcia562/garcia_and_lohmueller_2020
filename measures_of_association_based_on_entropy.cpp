@@ -21,7 +21,6 @@ for (i=1;i<=ni;i++)
 sumj[j] += nn[i][j];
 }
 /* Get the entropy of the x distribution /*
-4
 *hx=0.0;
 for (i=1;i<=ni;i++)
 if (sumj[j]) {
