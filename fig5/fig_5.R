@@ -1,3 +1,24 @@
+library(GenomicRanges)
+library(tidyverse)
+library(janitor)
+
+library(data.table)
+library(testthat)
+library(glue)
+library(vroom)
+library(cowplot)
+library(viridis)
+library(binr)
+library(mltools)
+library(FSA)
+library(knitr)
+library(kableExtra)
+library(ggbeeswarm)
+library(janitor)
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+
+
 ceu_df_b<-as_tibble(read_rds(path = "../data2/ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CEU")
