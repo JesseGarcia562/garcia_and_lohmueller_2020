@@ -43,8 +43,10 @@ summarized_constant_ld=constant_ld %>%
 
 
   
+
 yaxis_set_zero_plot<-summarized_constant_ld %>%
   mutate(recombination_rate=fct_rev(recombination_rate)) %>%
+  filter(recombination_rate != "r=1e-07" & recombination_rate != "r=1e-06") %>%
   ggplot(aes(x=distance_breaks, y=mean_r_2, color=factor(selection_coefficient)) )+  
   geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs"), aes(fill=selection_coefficient)) +
   theme_bw() +
@@ -54,8 +56,12 @@ yaxis_set_zero_plot<-summarized_constant_ld %>%
   scale_fill_manual(values=cbPalette) +
   theme(strip.background =element_rect(fill="white"), text = element_text(size = 22))  +
   scale_x_continuous(breaks = scales::pretty_breaks(n=3)) + 
-  guides(fill=FALSE)  + scale_x_continuous(expand = c(0, 0), limits = c(0, NA)) + 
+  guides(fill=FALSE)    + 
   scale_y_continuous(expand = c(0, 0), limits = c(0, NA))
+
+
+ggsave(filename="fig_1_yaxis_0.png", plot=yaxis_set_zero_plot, width=20, height=12)
+
 
 
 ggsave(filename="fig_1_yaxis_0.png", plot=yaxis_set_zero_plot, width=20, height=12)
