@@ -4,23 +4,17 @@ Scripts for Garcia and Lohmueller 2020
 
 # Computing Hrj
 
-## For slim
 
-To compute Hrj for slim we used the R Based script titled:
+
+To compute Hrj for VCFs we used the R Based script titled:
 
 "computing_hrj_slim.R"
 
-To compute Hrj and other measures of association based on entropy check out the C++ implementation use the script titled:
 
-"measures_of_association_based_on_entropy.cpp"
- 
-Here we implement this computation in C and C++. Given a two-dimensional (2D) contingency table in the form of an integer array ‘nn[i][j]’, where i labels the x variable and ranges from 1 to ni, j labels the y variable and ranges from 1 to nj, this routine returns the entropy ‘h’ of the whole table, the entropy hx of the x distribution, the entropy hy of the y distribution, the entropy hygx of y given x, the entropy hxgy of x ‘given’ y, the dependency of uygx of y on x (equations above), the ‘dependency’ uxgy of x on y and the symmetrical dependency ‘uxy’. This code is heavily adapted off The Art of Scientific Computing Second Edition Page 633.
 
 # Computing Significance of Supplementary Figure 5 (KS Test)
 
-> Effect of background selection on LD between S variants: this is interesting, and I think it merits further investigation, but Figure S5 does not convince me that the effect is real. Is the slight difference that is observed at d<500bp statistically significant?
-
-This is a great question! Given these two sets of data we asked a similar question: "Can we disprove, to a certain required level of significance, the null hypothesis that two data sets are drawn from the same population distribution function?" Let's assume that disproving the null hypothesis in effect proves that the data sets are from different distributions. However, failing to disprove the null hypothesis only shows that the data sets can be expected under a single distribution function. According to the scientific method, a scientist can never prove that two data sets come from a single distribution since no practical amount of data can distinguish between two distributions wich differ only by one part in $10^{10}$ [1].
+Given these two sets of data we asked a similar question: "Can we disprove, to a certain required level of significance, the null hypothesis that two data sets are drawn from the same population distribution function?" Let's assume that disproving the null hypothesis in effect proves that the data sets are from different distributions. However, failing to disprove the null hypothesis only shows that the data sets can be expected under a single distribution function. According to the scientific method, a scientist can never prove that two data sets come from a single distribution since no practical amount of data can distinguish between two distributions wich differ only by one part in $10^{10}$ [1].
 
 For continuous data as a function of a single variable the most generally accepted test is the Kolmogorov Smirnov test (KS test). The KS test is applicable to unbinned distributions that are functions of a single independent variable, that is, to data sets where each data point can be associated with a single number.This is important because we can covert this list of data points to an unbiased estimator. In such cases, the list of data points can be easily converted to an unbiased estimator $S_{N}(x)$ of the cumulative distribution function of the probability distribution from which it was drawn: If the $N$ events are located at values $x_{i}, i=1, \ldots, N,$ then $S_{N}(x)$ is the function giving the fraction of data points to the left of a given value $x .$ This function is obviously constant between consecutive (i.e., sorted into ascending order) $x_{i}$ 's, and jumps by the same constant $\left.1 / N \text { at each } x_{i} . \text   .\right)$
 
