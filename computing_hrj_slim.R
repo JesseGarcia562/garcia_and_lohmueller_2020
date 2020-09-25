@@ -48,19 +48,12 @@ return(genotypes)
 
 
 get_genotype_distribution<-function(genotype, allele_count){
-#	if (allele_count == 1){
-#		levels=c("0|0,0|0" ,"0|0,0|1", "0|0,1|0", "0|1,0|0", "0|1,0|1","0|1,1|0", "1|0,1|0", "1|0,0|0", "1|0,0|1")
-#	}
 
-#	if (allele_count == 2) {
-#		levels=c("0|0,0|0" ,"0|0,0|1", "0|0,1|0","0|0,1|1", "0|1,0|0", "0|1,0|1","0|1,1|0","0|1,1|1",  "1|0,1|0", "1|0,0|0", "1|0,0|1","1|0,1|1", "1|1,0|1", "1|1,1|0", "1|1,0|0", "1|1,1|1" ) 
-#	}
 
 
 genotype_distribution<-genotype %>% summarise_at(vars(starts_with("i")), list(~ paste(., collapse=","))) %>% select(-ID, -INFO) %>%
 
 	unlist(., use.names=FALSE)  %>%
-#	   factor(., levels=levels) %>%
 	   table()
 
 
@@ -91,7 +84,6 @@ combine_combinations_genotype_distribution_df<-function(combinations, genotype_d
 		   pos_2=as.integer(combinations[2]),
 		   variation_type=variation
 		   )
-#       df$genotype_distribution_df <- genotype_distribution_df	
 	return( bind_cols(df, genotype_distribution_df )) 	
 } 
 
