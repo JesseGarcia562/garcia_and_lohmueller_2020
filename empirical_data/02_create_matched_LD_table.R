@@ -52,8 +52,8 @@ synonsymous_ld<-future_map2_dfr(.x = df$chromosome, .y=df$allele_count, ~ combin
 ld_data<-bind_rows(synonsymous_ld, nonsynymous_ld) %>% write_rds(glue("../../data2/ld_{population}_annotated_low_coverage.rds"))
 
 ## Step 11
-append_bvalues(hg19_bvalue_bed="../../data2/b_values_hg19.bed", empirical_ld_table = glue("/u/home/j/jessegar/project-klohmuel/SLiM_ParallelRProject/data2/ld_{population}_annotated_low_coverage.rds")) %>% 
-write_rds(glue("../../data2/ld_{population}_annotated_bvalues_genetic_distance.rds"))
+append_bvalues(hg19_bvalue_bed="b_values_hg19.bed", empirical_ld_table = glue("ld_{population}_annotated_low_coverage.rds")) %>% 
+write_rds(glue("ld_{population}_annotated_bvalues_genetic_distance.rds"))
 
 
 ## Step 12
