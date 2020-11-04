@@ -1,8 +1,5 @@
 library(data.table)
 library(tidyverse)
-
-library(reticulate)
-library(Rcpp)
 library(glue)
 
 read_vcf<-function( vcf_input_path,allele_count,variation_type){
