@@ -110,5 +110,5 @@ safely_get_configuration_table<-safely(get_configuration_table)
 
 ## Usage for slim
 
-ns_config_doubletons<-safely_get_configuration_table(variation_type = 1, allele_count=2, chromosome=1,recombinationRate=.y, population="sim", distance_limit=100000,vcf_input_path=.x)
+hr2<-get_configuration_table(variation_type = 1, allele_count=2, chromosome=1,recombinationRate=.y, population="sim", distance_limit=100000,vcf_input_path=.x)
 
