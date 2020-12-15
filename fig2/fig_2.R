@@ -43,3 +43,21 @@ summarise(max_d=max(mean_d), min_d=min(mean_d), middle_d=sort(mean_d, decreasing
   mutate(recombination_rate=glue("r={recombination_rate}")) %>%
   mutate(dominance_coefficient=factor(dominance_coefficient,levels= dominance_levels)) %>%
   mutate(recombination_rate=factor(recombination_rate, levels=recombination_levels)) 
+
+
+dprime_mean_plot<-subsampled_doubletons_summary %>%
+  mutate(recombination_rate = fct_rev(recombination_rate)) %>%
+  filter(selection_coefficient != -0.1) %>%
+  ggplot(aes(x=recombination_rate, y=mean_of_mean_d_prime, colour=selection_coefficient)) +
+  geom_point() +
+    geom_errorbar(aes(x=recombination_rate,ymin = min_d_prime, ymax=max_d_prime) , size=3 , width=.2,alpha=0.5)  +
+  facet_wrap(~dominance_coefficient , nrow=2)  +
+  scale_colour_manual(values=colors) + 
+  guides(fill=FALSE)  +
+  theme_bw() +
+    theme(strip.background =element_rect(fill="white"), text = element_text(size = 22)) +
+  labs(x="Recombination rate",y=bquote("Mean D'" ), colour="Selection Coefficient") +
+  geom_line(aes(group=interaction(selection_coefficient)), size=2, alpha=1)
+
+dprime_mean_plot
+
