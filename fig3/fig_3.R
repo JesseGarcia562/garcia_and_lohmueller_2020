@@ -2,7 +2,7 @@ c("1.5", "", "" ,"6" ,"","","10")
 
 
 ## Recombination of 1e-09
-simulation_df<-read_rds("../data2/configuration_gravel_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+simulation_df<-read_rds("../figure_data/configuration_gravel_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
   mutate(distance=abs(pos_1-pos_2)) %>%
   mutate(variation_type=case_when(
     variation_type == 1 ~ "Nonsynonymous",
@@ -24,7 +24,7 @@ annotated_genotypes_recomb_1e9<-long_simulation_df_genotype_config
 
 ## Recombination of 1e-08
 
-simulation_df<-read_rds("../data2/configuration_gravel_simulations_average_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+simulation_df<-read_rds("../figure_data/configuration_gravel_simulations_average_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
   mutate(distance=abs(pos_1-pos_2)) %>%
   mutate(variation_type=case_when(
     variation_type == 1 ~ "Nonsynonymous",
