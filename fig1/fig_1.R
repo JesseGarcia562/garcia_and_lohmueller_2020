@@ -1,4 +1,4 @@
-constant_ld<-as_tibble(fread("/Users/jessegarcia/Documents/SLiM_ParallelRProject/data2/constant_dfe_and_constant_selection_ld.csv", data.table = FALSE))
+constant_ld<-as_tibble(fread("../data/constant_dfe_and_constant_selection_ld.csv", data.table = FALSE))
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
