@@ -4,7 +4,7 @@ selection_levels=levels=rev(selection_levels)
 recombination_levels=c("r=1e-06", "r=1e-07", "r=1e-08" ,"r=1e-09")
 dominance_levels=c("h=0.5",  "h=0")
 
-doubletons_ld<-as_tibble(fread("../data2/constant_population_constant_selection_constant_dfe_doubletons_all_replicates_ld.csv", data.table = FALSE)) %>%
+doubletons_ld<-as_tibble(fread("../figure_data/constant_population_constant_selection_constant_dfe_doubletons_all_replicates_ld.csv", data.table = FALSE)) %>%
   mutate(d=case_when(
     r_2 == 4e-04 ~ -0.0004 , 
     r_2 == 0.2399 ~ 0.0096, 
