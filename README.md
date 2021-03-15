@@ -2,7 +2,7 @@
 Scripts for Garcia and Lohmueller 2020
 
 
-# Computing Hrj
+# Computing Hrj with SLIM VCFs
 
 To compute Hrj for VCFs we used the R Based script titled: "computing_hrj_slim.R"
 
@@ -23,3 +23,4 @@ distance_limit (integer) = This argument limits the base pairs allowed between t
 vcf_input_path (character) = This argument indicates the path towards the VCF to be analyzed. 
 
 
+# Computing Hrj with other data
