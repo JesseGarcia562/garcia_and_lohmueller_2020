@@ -185,8 +185,8 @@ differenceInD_2<-function(df){
   
 }
 
-ACFilteredLD<-readRDS("/Users/jessegarcia/Documents/New LD Stats D Prime Tables/ACFilteredLDWithGeneticDistanceJan18.RDS")
-matchedPhysicalBreaks50Data<-readRDS("/Users/jessegarcia/Documents/New LD Stats D Prime Tables/matchedPhysicalBreaks50Data.rds")
+ACFilteredLD<-readRDS("ACFilteredLDWithGeneticDistanceJan18.RDS")
+matchedPhysicalBreaks50Data<-readRDS("matchedPhysicalBreaks50Data.rds")
 
 mergedEmpirical<-as_tibble(merge(ACFilteredLD, matchedPhysicalBreaks50Data)) %>% 
   filter(AC <= 5, GeneticDistance != 0) %>% 
