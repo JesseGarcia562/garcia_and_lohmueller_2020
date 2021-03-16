@@ -19,19 +19,19 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 
 
 
-ceu_df_b<-as_tibble(read_rds(path = "../data2/ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
+ceu_df_b<-as_tibble(read_rds(path = "ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CEU")
-chb_df_b<-as_tibble(read_rds(path ="../data2/chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
+chb_df_b<-as_tibble(read_rds(path ="chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CHB")
-mxl_df_b<-as_tibble(read_rds(path = "../data2/MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
+mxl_df_b<-as_tibble(read_rds(path = "MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="MXL")
-jpt_df_b<-as_tibble(read_rds(path ="../data2/JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
+jpt_df_b<-as_tibble(read_rds(path ="JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="JPT")
-yri_df_b<-as_tibble(read_rds(path ="../data2/YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
+yri_df_b<-as_tibble(read_rds(path ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="YRI")
 
