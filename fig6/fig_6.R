@@ -1,10 +1,10 @@
-high_coverage_hg38_genotype_configuration<-read_csv("../data2/high_coverage_hg38_genotype_configuration.csv")
+high_coverage_hg38_genotype_configuration<-read_csv("high_coverage_hg38_genotype_configuration.csv")
 
-long_low_genotype_config <- read_csv("../data2/long_low_genotype_config.csv")
+long_low_genotype_config <- read_csv("long_low_genotype_config.csv")
 
 
 ## Configuration of doubletons in r=1e-09 Gravel Simulations
-simulation_df<-read_rds("../data2/configuration_gravel_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+simulation_df<-read_rds("configuration_gravel_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
   mutate(distance=abs(pos_1-pos_2)) %>%
   mutate(variation_type=case_when(
     variation_type == 1 ~ "Nonsynonymous",
