@@ -3,7 +3,7 @@ library(data.table)
 library(glue)
 
 
-yri_df_b<-as_tibble(read_rds(path ="../data2/YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
+yri_df_b<-as_tibble(read_rds(path ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="YRI") %>%  mutate(Variation=case_when(
   Variation == "=nonsynonymous_SNV" ~ "Nonsynonymous", 
