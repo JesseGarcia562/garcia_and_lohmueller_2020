@@ -24,3 +24,8 @@ vcf_input_path (character) = This argument indicates the path towards the VCF to
 
 
 # Computing Hrj with other data
+
+
+# Simulation scripts
+
+In the folder simulation_scripts, scripts to simulate Model 2 and Model 3 exist. Each row of the csv contains the script needed for a simulation replicate.  
