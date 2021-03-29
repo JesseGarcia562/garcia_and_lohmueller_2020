@@ -1,5 +1,6 @@
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
+colors=c("0"="#0072B2", "-1e-04"="#F0E442", "-0.001"="#009E73", "-0.01"= "#56B4E9", "-0.1"="#E69F00", "DFE"= "#999999")
 
 selection_levels=c("0", "-1e-04", "-0.001", "-0.01", "-0.1", "DFE")
 selection_levels=rev(selection_levels)
@@ -13,6 +14,7 @@ library(data.table)
 library(tidyverse)
 library(glue)
 
+## This file can be found on the paper's data dryad dataset.
 doubletons_ld<-as_tibble(fread("../data2/constant_population_constant_selection_constant_dfe_doubletons_all_replicates_ld.csv", data.table = FALSE))
 
 set.seed(1)
