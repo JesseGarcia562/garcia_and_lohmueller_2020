@@ -1,7 +1,6 @@
 library(GenomicRanges)
 library(tidyverse)
 library(janitor)
-
 library(data.table)
 library(testthat)
 library(glue)
@@ -19,28 +18,28 @@ cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2",
 
 
 
-ceu_df_b<-as_tibble(read_rds(path = "ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
+ceu_df_b <- as_tibble(read_rds(path = "ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CEU")
-chb_df_b<-as_tibble(read_rds(path ="chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
+chb_df_b <- as_tibble(read_rds(path ="chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CHB")
-mxl_df_b<-as_tibble(read_rds(path = "MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
+mxl_df_b <- as_tibble(read_rds(path = "MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="MXL")
-jpt_df_b<-as_tibble(read_rds(path ="JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
+jpt_df_b <- as_tibble(read_rds(path ="JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="JPT")
-yri_df_b<-as_tibble(read_rds(path ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
+yri_df_b <- as_tibble(read_rds(path ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="YRI")
 
 
 #yri_df_b
-empirical_matched<-bind_rows(ceu_df_b, chb_df_b,mxl_df_b , jpt_df_b)
+empirical_matched <- bind_rows(ceu_df_b, chb_df_b,mxl_df_b , jpt_df_b)
 
 
-plot_ld_across_genetic_distance<-function(ACFilteredLD,AlleleCountMax, bins, removeZeroCM){
+plot_ld_across_genetic_distance <- function(ACFilteredLD,AlleleCountMax, bins, removeZeroCM){
   
   if(removeZeroCM){
     doubletonsLD<- na.omit(ACFilteredLD %>% filter( AC <= AlleleCountMax & GeneticDistance != 0))
@@ -48,31 +47,20 @@ plot_ld_across_genetic_distance<-function(ACFilteredLD,AlleleCountMax, bins, rem
   doubletonsLD<- na.omit(ACFilteredLD %>% filter( AC <= AlleleCountMax))
 }
 
-doubletonsLD$GeneticDistanceBreaks<-bin_data(doubletonsLD$GeneticDistance, bins=bins, binType="quantile")
+doubletonsLD$GeneticDistanceBreaks <- bin_data(doubletonsLD$GeneticDistance, bins=bins, binType="quantile")
 
 
-percentileNames<-c("0-10%", "10-20%", "20-30%", "30-40%", "40-50%", "50-60%", "60-70%", "70-80%", "80-90%", "90-100%")
+percentileNames <- c("0-10%", "10-20%", "20-30%", "30-40%", "40-50%", "50-60%", "60-70%", "70-80%", "80-90%", "90-100%")
 
 
-doubletonsLD<-doubletonsLD %>% 
+doubletonsLD <- doubletonsLD %>% 
   mutate(Variation=case_when(
     Variation=="=nonsynonymous_SNV" ~ "Nonsynonymous",
     Variation=="=synonymous_SNV" ~ "Synonymous"
   ))
 
-
-
-
-
 return(doubletonsLD)
 
-
-# 
-# ggplot(doubletonsLD, aes(y=D,x=GeneticDistanceBreaks, colour=Variation, group=1)) + 
-#   geom_line( stat = "summary", fun.y = "mean") + 
-#   labs(y="Mean D' Of Matched Pairs", x="Genetic Distance Between Variants (Quantile Bins cM)", title="", fill = "Variant Annotation") +
-#   scale_x_discrete(labels=percentileNames) +   
-#   scale_colour_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2"))
 }
 
 
@@ -81,9 +69,9 @@ return(doubletonsLD)
 
 
   
-empirical_matched$GeneticDistanceBreaks<-bin_data(empirical_matched$genetic_distance, bins=10, binType="quantile")
+empirical_matched$GeneticDistanceBreaks <- bin_data(empirical_matched$genetic_distance, bins=10, binType="quantile")
 
-empirical_matched<-empirical_matched %>%  
+empirical_matched <- empirical_matched %>%  
   mutate(Variation=case_when(
   Variation == "=nonsynonymous_SNV" ~ "Nonsynonymous", 
   Variation == "=synonymous_SNV" ~ "Synonymous" 
