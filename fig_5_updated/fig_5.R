@@ -1,3 +1,111 @@
+library(tidyverse)
+library(cowplot)
+
+
+annotate_genotypes<-function(long_genotype_config, type){
+  
+  
+  if (type == "unphased"){
+    long_genotype_config<-long_genotype_config %>%
+      mutate(words=case_when(
+        genotype == "0/0,0/0" ~ "Homozygous reference (0/0,0/0)", 
+        genotype == "0/0,0/1" ~ "Single heterozygote (0/1,0/0 or 0/0,0/1)", 
+        genotype == "0/1,0/0" ~ "Single heterozygote (0/1,0/0 or 0/0,0/1)",
+        genotype == "0/1,0/1" ~ "Double Heterozygote (0/1,0/1)"
+      ))
+    
+    return(long_genotype_config)
+  }
+  
+  
+  if (type == "phased"){
+    long_genotype_config<-long_genotype_config %>%
+      mutate(words=case_when(
+        genotype == "0|0,0|0" ~ "Homozygous reference (0|0,0|0)", 
+        genotype == "0|0,0|1" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "1|0,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|1,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|0,1|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|1,0|1" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+        genotype == "0|1,1|0" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+        genotype == "1|0,1|0" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+        genotype == "1|0,0|1" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)"
+        
+      ))
+    
+    return(long_genotype_config)
+  }
+  
+  
+  if (type == "phased_coupling"){
+    long_genotype_config<-long_genotype_config %>%
+      mutate(words=case_when(
+        genotype == "0|0,0|0" ~ "Homozygous reference (0|0,0|0)", 
+        genotype == "0|0,0|1" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "1|0,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|1,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|0,1|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+        genotype == "0|1,0|1" ~ "Double heterozygote Coupling (0|1,0|1 & 1|0,1|0)",
+        genotype == "0|1,1|0" ~ "Double heterozygote Repulsion (0|1,1|0 & 1|0,0|1)",
+        genotype == "1|0,1|0" ~ "Double heterozygote Coupling (0|1,0|1 & 1|0,1|0)",
+        genotype == "1|0,0|1" ~ "Double heterozygote Repulsion (0|1,1|0 & 1|0,0|1)"
+        
+      ))
+    
+    return(long_genotype_config)
+  }
+  
+  
+  
+  
+}
+
+
+plot_rh_unphased<-function(annotated_genotypes, window_size, plot_type, allele_count_to_analyze){
+  unique_words<-unique(annotated_genotypes$words) 
+  
+  unique_words<-unique_words[!is.na(unique_words)]
+  
+  
+  testthat::expect_true(unique_words[3] == "Double Heterozygote (0/1,0/1)" | unique_words[3] == "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)")
+  if (plot_type == "bar_plot"){
+    doubleton_plots<-unique_words %>% map(~ { 
+      annotated_genotypes %>%
+        filter(allele_count == allele_count_to_analyze, !is.na(words), words ==.x)  %>%
+        mutate(distance_breaks=cut_interval(distance, length=window_size)) %>%
+        group_by(distance_breaks, variation_type, recombination_rate, words) %>%
+        summarise(mean_count=mean(count)) %>% 
+        ungroup() %>%
+        ggplot(aes(x=distance_breaks, y=mean_count, fill=variation_type)) +
+        geom_col(position="dodge2") +
+        facet_grid(~words,scales="free") + 
+        theme_bw()
+    } ) } else if (plot_type == "line_plot") {
+      
+      doubleton_plots<-unique_words %>% map(~ { 
+        annotated_genotypes %>%
+          filter(allele_count == allele_count_to_analyze, !is.na(words), words ==.x)  %>%
+          mutate(distance_breaks=cut_interval(distance, length=window_size)) %>%
+          group_by(distance_breaks, variation_type, recombination_rate, words) %>%
+          summarise(mean_count=mean(count)) %>% 
+          ungroup() %>%
+          ggplot(aes(x=distance_breaks, y=mean_count, colour=variation_type, group=variation_type)) +
+          ylab(bquote('Mean '*H[R]^.(allele_count_to_analyze))) +
+          labs( x="Physical distance (kbp)", colour="Variation") +
+          geom_point(size=2) +
+          geom_line(size=1.5) +
+          #  facet_grid(~words,scales="free") + 
+          theme_bw() +
+          theme(text=element_text(size=16)) +
+          scale_color_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2"))
+      }  )
+    }
+  
+  
+  
+  return(doubleton_plots)
+}
+
 high_coverage_hg38_genotype_configuration <- read_csv("high_coverage_hg38_genotype_configuration.csv")
 
 long_low_genotype_config <- read_csv("long_low_genotype_config.csv")
