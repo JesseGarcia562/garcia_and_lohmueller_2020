@@ -25,6 +25,27 @@ vcf_input_path (character) = This argument indicates the path towards the VCF to
 
 # Computing Hrj with other data
 
+## Input data
+
+To compute Hrj with data types that are not slim VCF's, first one must create a data frame with 9 columns.
+
+pos_1 (double) = The position (bp) of the left most variant.
+pos_2 (double) = The position (bp) of the right most variant.
+variation_type (character) = Defines the annotation of both variants. Either "nonsynonymous_SNV" or "synonymous_SNV".
+chromosome (double) = The chromosome number that both variants exist on. 
+allele_count (double) = The number of times the variants exists in the sample. For doubletons this would be 2, and for singletons this would be 1.
+data_type (character) = Metadata defining where the data and genotype call are coming from. 
+`0/0,0/0` (double) = The number of individuals in the sample that are homozygous for the ancestral allele at pos_1 and pos_2
+`0/0,0/1` (double) = The number of individuals in the sample that are homozygous for the ancestral allele at pos_1 and heterozygous for the ancestral allele at pos_2
+`0/1,0/0` (double) = The number of individuals in the sample that are homozygous for the ancestral allele at pos_1 and heterozygous for the ancestral allele at pos_2
+`0/1,0/1` (double) = The number of individuals in the sample that are heterozygous for the ancestral allele at pos_1 and pos_2
+`0/0,1/1` (double) = The number of individuals in the sample that are homozygous for the ancestral allele at pos_1 and homozygous for the derived allele at pos_2
+`1/1,0/0` (double) = The number of individuals in the sample that are homozygous for the derived allele at pos_1 and homozygous for the ancestral allele at pos_2
+`1/1,1/1` (double) = The number of individuals in the sample that are homozygous for the derived allele at pos_1 and pos_2
+`1/1,0/1` (double) = The number of individuals in the sample that are homozygous for the derived allele at pos_1 and heterozygous for the ancestral allele at pos_2
+`0/1,1/1` (double) = The number of individuals in the sample that are heterozygous for the derived allele at pos_1 and homozygous for the ancestral allele at pos_2
+
+
 
 # Simulation scripts
 
