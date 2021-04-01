@@ -4,25 +4,13 @@ library(glue)
 
 
 ## This data file can be found at https://datadryad.org/stash/dataset/doi:10.5068/D1G674. Unzip the file for fread to work. 
-constant_ld<-as_tibble(fread("../figure_data/constant_dfe_and_constant_selection_ld.csv", data.table = FALSE))
+constant_ld<-as_tibble(fread("/Users/jessegarcia/Documents/SLiM_ParallelRProject/data2/constant_dfe_and_constant_selection_ld.csv", data.table = FALSE))
 
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 
 selection_levels=c("0", "-1e-04", "-0.001", "-0.01", "-0.1", "DFE")
 selection_levels=levels=rev(selection_levels)
-
-recombination_levels=c("r=1e-06", "r=1e-07", "r=1e-08" ,"r=1e-09")
-dominance_levels=c("h=0",  "h=0.5")
-
-
-
-cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-
-
-selection_levels=c("0", "-1e-04", "-0.001", "-0.01", "-0.1", "DFE")
-selection_levels=rev(selection_levels)
-
 
 ## Changing the order of dominance levels for this
 recombination_levels=c("r=1e-06", "r=1e-07", "r=1e-08" ,"r=1e-09")
@@ -66,8 +54,5 @@ yaxis_set_zero_plot<-summarized_constant_ld %>%
   scale_y_continuous(expand = c(0, 0), limits = c(0, NA))
 
 
-ggsave(filename="fig_1_yaxis_0.png", plot=yaxis_set_zero_plot, width=20, height=12)
+ggsave(filename="../figures/si_fig2.tiff", plot=yaxis_set_zero_plot, width=20, height=12)
 
-
-
-ggsave(filename="fig_1_yaxis_0.png", plot=yaxis_set_zero_plot, width=20, height=12)
