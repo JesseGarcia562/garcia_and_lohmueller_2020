@@ -1,7 +1,117 @@
-c("1.5", "", "" ,"6" ,"","","10")
+
+library(tidyverse)
+library(cowplot)
+
+annotate_genotypes<-function(long_genotype_config, type){
+  
+  
+  if (type == "unphased"){
+  long_genotype_config<-long_genotype_config %>%
+  mutate(words=case_when(
+    genotype == "0/0,0/0" ~ "Homozygous reference (0/0,0/0)", 
+    genotype == "0/0,0/1" ~ "Single heterozygote (0/1,0/0 or 0/0,0/1)", 
+    genotype == "0/1,0/0" ~ "Single heterozygote (0/1,0/0 or 0/0,0/1)",
+    genotype == "0/1,0/1" ~ "Double Heterozygote (0/1,0/1)"
+  ))
+  
+  return(long_genotype_config)
+  }
+  
+    
+  if (type == "phased"){
+  long_genotype_config<-long_genotype_config %>%
+  mutate(words=case_when(
+    genotype == "0|0,0|0" ~ "Homozygous reference (0|0,0|0)", 
+    genotype == "0|0,0|1" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "1|0,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|1,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|0,1|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|1,0|1" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+    genotype == "0|1,1|0" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+    genotype == "1|0,1|0" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)",
+    genotype == "1|0,0|1" ~ "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)"
+    
+  ))
+  
+  return(long_genotype_config)
+  }
+  
+  
+    if (type == "phased_coupling"){
+  long_genotype_config<-long_genotype_config %>%
+  mutate(words=case_when(
+    genotype == "0|0,0|0" ~ "Homozygous reference (0|0,0|0)", 
+    genotype == "0|0,0|1" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "1|0,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|1,0|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|0,1|0" ~ "Single heterozygote (0|0,0|1 & 1|0,0|0 & 0|1,0|0 & 0|0,1|0)",
+    genotype == "0|1,0|1" ~ "Double heterozygote Coupling (0|1,0|1 & 1|0,1|0)",
+    genotype == "0|1,1|0" ~ "Double heterozygote Repulsion (0|1,1|0 & 1|0,0|1)",
+    genotype == "1|0,1|0" ~ "Double heterozygote Coupling (0|1,0|1 & 1|0,1|0)",
+    genotype == "1|0,0|1" ~ "Double heterozygote Repulsion (0|1,1|0 & 1|0,0|1)"
+    
+  ))
+  
+  return(long_genotype_config)
+  }
+  
+  
+  
+  
+}
+
+
+
+
+plot_rh_unphased<-function(annotated_genotypes, window_size, plot_type, allele_count_to_analyze){
+  unique_words<-unique(annotated_genotypes$words) 
+
+unique_words<-unique_words[!is.na(unique_words)]
+
+
+testthat::expect_true(unique_words[3] == "Double Heterozygote (0/1,0/1)" | unique_words[3] == "Double heterozygote (0|1,0|1 & 0|1,1|0 & 1|0,1|0 & 1|0,0|1)")
+if (plot_type == "bar_plot"){
+doubleton_plots<-unique_words %>% map(~ { 
+annotated_genotypes %>%
+  filter(allele_count == allele_count_to_analyze, !is.na(words), words ==.x)  %>%
+      mutate(distance_breaks=cut_interval(distance, length=window_size)) %>%
+  group_by(distance_breaks, variation_type, recombination_rate, words) %>%
+  summarise(mean_count=mean(count)) %>% 
+    ungroup() %>%
+  ggplot(aes(x=distance_breaks, y=mean_count, fill=variation_type)) +
+  geom_col(position="dodge2") +
+  facet_grid(~words,scales="free") + 
+    theme_bw()
+} ) } else if (plot_type == "line_plot") {
+  
+  doubleton_plots<-unique_words %>% map(~ { 
+annotated_genotypes %>%
+  filter(allele_count == allele_count_to_analyze, !is.na(words), words ==.x)  %>%
+      mutate(distance_breaks=cut_interval(distance, length=window_size)) %>%
+  group_by(distance_breaks, variation_type, recombination_rate, words) %>%
+  summarise(mean_count=mean(count)) %>% 
+    ungroup() %>%
+  ggplot(aes(x=distance_breaks, y=mean_count, colour=variation_type, group=variation_type)) +
+  ylab(bquote('Mean '*H[R]^.(allele_count_to_analyze))) +
+  labs( x="Physical distance (kbp)", colour="Variation") +
+  geom_point(size=2) +
+  geom_line(size=1.5) +
+#  facet_grid(~words,scales="free") + 
+  theme_bw() +
+  theme(text=element_text(size=16)) +
+  scale_color_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2"))
+}  )
+}
+
+
+  
+return(doubleton_plots)
+}
+
 
 
 ## Recombination of 1e-09
+# path on computer "/Users/jessegarcia/Documents/SLiM_ParallelRProject copy/data2/configuration_gravel_simulations_low_recomb_ac_1_2.rds"
 simulation_df <- read_rds("configuration_gravel_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
   mutate(distance=abs(pos_1-pos_2)) %>%
   mutate(variation_type=case_when(
@@ -23,7 +133,7 @@ annotated_genotypes_recomb_1e9 <- long_simulation_df_genotype_config
 
 
 ## Recombination of 1e-08
-
+# path on computer "/Users/jessegarcia/Desktop/SLiM_ParallelRProject/data2/configuration_gravel_simulations_average_recomb_ac_1_2.rds"
 simulation_df <- read_rds("configuration_gravel_simulations_average_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
   mutate(distance=abs(pos_1-pos_2)) %>%
   mutate(variation_type=case_when(
@@ -65,24 +175,6 @@ legend_b <- get_legend(
     theme(legend.position = "bottom")
 )
 
-hr_plots <- plot_grid(
-simulations_singletons_hr_recomb_1e9 + theme(legend.position = "none") + scale_x_discrete(labels=c("1.5", "", "" ,"6" ,"","","10")) + xlab(NULL)+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()), 
-simulations_doubletons_hr_recomb_1e9 + theme(legend.position = "none") + scale_x_discrete(labels=c("1.5", "", "" ,"6" ,"","","10")) + xlab(NULL) +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank()),
-simulations_singletons_hr_recomb_1e8 + theme(legend.position = "none") + scale_x_discrete(labels=c("1.5", "", "" ,"6" ,"","","10")), 
-simulations_doubletons_hr_recomb_1e8 + theme(legend.position = "none") + scale_x_discrete(labels=c("1.5", "", "" ,"6" ,"","","10")),
-labels = c('A', 'B', 'C', 'D'), label_size = 12, nrow=2, ncol=2)
-
-
-
-plot_grid(hr_plots,legend_b, ncol=1, rel_heights = c(1, .1))
-
-
 
 
 
@@ -101,4 +193,6 @@ labels = c('A', 'C', 'B', 'D'), label_size = 12, nrow=2, ncol=2)
 
 
 
-plot_grid(hr_plots,legend_b, ncol=1, rel_heights = c(1, .1))
+simulated_hr_plots<-plot_grid(hr_plots,legend_b, ncol=1, rel_heights = c(1, .1))
+
+ggsave(filename = "../figures/figure_2_simulated_hr_plots.tiff", width=20, height=12)
