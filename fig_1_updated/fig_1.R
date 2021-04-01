@@ -1,3 +1,4 @@
+library(data.table)
 library(tidyverse)
 set.seed(1)
 
