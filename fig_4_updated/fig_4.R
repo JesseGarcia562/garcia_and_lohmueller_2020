@@ -1,36 +1,27 @@
-library(GenomicRanges)
 library(tidyverse)
 library(janitor)
 library(data.table)
 library(testthat)
 library(glue)
-library(vroom)
 library(cowplot)
-library(viridis)
 library(binr)
 library(mltools)
-library(FSA)
-library(knitr)
-library(kableExtra)
-library(ggbeeswarm)
-library(janitor)
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 
-
-ceu_df_b <- as_tibble(read_rds(path = "ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
+ceu_df_b <- as_tibble(read_rds(file = "ceu_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CEU")
-chb_df_b <- as_tibble(read_rds(path ="chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
+chb_df_b <- as_tibble(read_rds(file ="chb_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="CHB")
-mxl_df_b <- as_tibble(read_rds(path = "MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
+mxl_df_b <- as_tibble(read_rds(file = "MXL_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="MXL")
-jpt_df_b <- as_tibble(read_rds(path ="JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
+jpt_df_b <- as_tibble(read_rds(file ="JPT_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="JPT")
-yri_df_b <- as_tibble(read_rds(path ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
+yri_df_b <- as_tibble(read_rds(file ="YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="YRI")
 
@@ -63,11 +54,6 @@ return(doubletonsLD)
 
 }
 
-
-
-
-
-
   
 empirical_matched$GeneticDistanceBreaks <- bin_data(empirical_matched$genetic_distance, bins=10, binType="quantile")
 
@@ -77,35 +63,8 @@ empirical_matched <- empirical_matched %>%
   Variation == "=synonymous_SNV" ~ "Synonymous" 
 ))
 
-empirical_matched %>% 
-  group_by(GeneticDistanceBreaks, Variation, population) %>%
-  summarise(mean_d=mean(D)) %>%
-  ggplot(aes(x=GeneticDistanceBreaks, y=mean_d, colour=Variation, group=Variation)) +
-  geom_line(size=1.5) + 
-  theme_bw() +
-  facet_wrap(~population, ncol=1) + 
-  labs(y="Mean D of Matched Pairs", x="Genetic Distance Bins") + 
-  scale_color_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2")) +
-  theme(text=element_text(size=16), axis.text.x = element_text(angle=45, hjust=1, size=10)) 
-  
 
-
-
-empirical_matched %>% 
-  group_by(GeneticDistanceBreaks, Variation, population) %>%
-  summarise(mean_d=mean(D)) %>%
-  ggplot(aes(x=GeneticDistanceBreaks, y=mean_d, colour=Variation, group=Variation)) +
-  geom_point(size=1.5) + 
-  geom_line(size=1) +
-  theme_bw() +
-  facet_wrap(~population, ncol = 1) + 
-  labs(y="Mean D of Matched Pairs", x="Genetic Distance Bins (cM)") + 
-  scale_color_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2")) +
-  scale_x_discrete(labels=c("3.47e-05", "3.32e-04", "1.56e-03", "6.46e-03", "6.28e-01")) +
-  theme(text=element_text(size=16)) 
-
-
-empirical_matched %>% 
+figure_4_a <- empirical_matched %>% 
   group_by(GeneticDistanceBreaks, Variation, population) %>%
   summarise(mean_d=mean(DPrime)) %>%
   ggplot(aes(x=GeneticDistanceBreaks, y=mean_d, colour=Variation, group=Variation)) +
@@ -117,3 +76,7 @@ empirical_matched %>%
   scale_color_manual(values=c("Synonymous"="dodgerblue1", "Nonsynonymous"="darkorchid2")) +
   scale_x_discrete(labels=c("3.47e-05", "3.32e-04", "1.56e-03", "6.46e-03", "6.28e-01")) +
   theme(text=element_text(size=18))
+
+figure_4_a
+
+ggsave("../figures/figure_4a_mean_dprime_of_matched_pairs_across_populations.tiff", width=20, height=12)
