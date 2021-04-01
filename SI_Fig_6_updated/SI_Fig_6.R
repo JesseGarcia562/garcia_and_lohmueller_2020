@@ -10,7 +10,7 @@ return(round(lower+(upper-lower)/2, dp))
 
 # Analyzing Lower recombination rate doubletons
 
-lowRecombSLD<-read_rds("/Users/jessegarcia/Documents/SLiM_ParallelRProject/data/gravelMigrationAndNoMigrationSimulations_attemptFour_smallerRecombinations_June10_SLD.rds")
+lowRecombSLD<-read_rds("gravelMigrationAndNoMigrationSimulations_attemptFour_smallerRecombinations_June10_SLD.rds")
 
 
 
