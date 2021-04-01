@@ -115,11 +115,17 @@ theme_set((theme_bw(base_size=22)))
 
 
 set.seed(1)
-yri_df_b<-as_tibble(read_rds("../data2/YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
+
+## Path on computer /Users/jessegarcia/Documents/garcia_and_lohmueller_2020/fig_4_updated/YRI_b_value_breaks_5_physical_breaks_200.rds
+yri_df_b<-as_tibble(read_rds("YRI_b_value_breaks_5_physical_breaks_200.rds")) %>%
   dplyr::rename(D=X6,variation=variation_type, r_square=genetic_distance, genetic_distance=X3, DPrime=X7) %>%
   mutate(Variation=glue("={variation}"), rSquare=r_square) %>% mutate(population="YRI") 
 
 
 
 
-plotPermutations3(yri_df_b, population="YRI")
+permutation_test_figure <- plotPermutations3(yri_df_b, population="YRI")
+
+permutation_test_figure
+
+ggsave("../figures/figure_3b_mean_dprime_of_matched_pairs.tiff", width=20, height=12)
