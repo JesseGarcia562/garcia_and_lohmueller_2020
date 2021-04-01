@@ -1,3 +1,6 @@
+library(data.table)
+library(tidyverse)
+
 cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
 colors=c("0"="#0072B2", "-1e-04"="#F0E442", "-0.001"="#009E73", "-0.01"= "#56B4E9", "-0.1"="#E69F00", "DFE"= "#999999")
@@ -15,7 +18,7 @@ library(tidyverse)
 library(glue)
 
 ## This file can be found on the paper's data dryad dataset.
-doubletons_ld<-as_tibble(fread("../data2/constant_population_constant_selection_constant_dfe_doubletons_all_replicates_ld.csv", data.table = FALSE))
+doubletons_ld<-as_tibble(fread("/Users/jessegarcia/Documents/SLiM_ParallelRProject copy/data2/constant_population_constant_selection_constant_dfe_doubletons_all_replicates_ld.csv", data.table = FALSE))
 
 set.seed(1)
 subsampled_doubletons<-doubletons_ld %>%
@@ -34,7 +37,7 @@ subsampled_doubletons_summary<-subsampled_doubletons %>%
   summarise(mean_r_2=mean(r_2)) %>% 
   ungroup() %>%
   mutate(selection_coefficient = replace(selection_coefficient, selection_coefficient == -999, "DFE")) %>%
-  mutate(selection_coefficient = factor(selection_coefficient, levels=levels) ) %>%
+  mutate(selection_coefficient = factor(selection_coefficient, levels=selection_levels) ) %>%
   mutate(dominance_coefficient = glue("h={dominance_coefficient}")) %>%
   mutate(recombination_rate=glue("r={recombination_rate}")) %>%
   mutate(dominance_coefficient=factor(dominance_coefficient,levels= dominance_levels)) %>%
@@ -50,7 +53,7 @@ subsampled_doubletons_summary_error_bars<-subsampled_doubletons_summary %>%
 
 
 
-subsampled_doubletons_summary_error_bars %>%
+si_fig_5 <- subsampled_doubletons_summary_error_bars %>%
   mutate(recombination_rate=fct_rev(recombination_rate)) %>%
   ggplot(aes(x=recombination_rate, y=mean_of_mean_r2, colour=selection_coefficient)) +
   geom_errorbar(aes(x=recombination_rate,ymin = min_r_2, ymax=max_r_2) , size=2 , width=.1,alpha=0.5)  +
@@ -62,3 +65,6 @@ subsampled_doubletons_summary_error_bars %>%
     theme(strip.background =element_rect(fill="white"), text = element_text(size = 18)) +
   labs(x="Recombination rate",y=bquote("Mean"~r^2 ), colour="Selection Coefficient") +
   geom_line(aes(group=selection_coefficient), size=2)
+
+si_fig_5
+ggsave(filename="../figures/si_figure_5_mean_r2.tiff", plot=si_fig_5, width=20, height=12)
