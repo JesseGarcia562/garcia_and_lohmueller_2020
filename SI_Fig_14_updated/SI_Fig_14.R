@@ -98,7 +98,7 @@ plot_grid(DPermGraph, DPrimePermGraph, RSquarePermGraph, FreqABPermGraph, labels
 
 
 #No Selection New DFE Recom 1e-8 (Scaled 1e-7)
-matchedLDTableNoSelectionAvgRecombDataNewDFE<-readRDS("/Users/jessegarcia/Documents/LD Simulations Backup/burninVCF/h_0.5/matchedLDTableNoSelectionAvgRecombNewDFE.rds")
+matchedLDTableNoSelectionAvgRecombDataNewDFE<-readRDS("matchedLDTableNoSelectionAvgRecombNewDFE.rds")
 si_fig_14 <- plotPermutations(matchedLDTableNoSelectionAvgRecombDataNewDFE)
 si_fig_14
 ggsave(filename="figures/si_figure_14_no_selection_permutation.tiff", plot=si_fig_14, width=20, height=12)
