@@ -13,8 +13,9 @@ annotate_genotypes<-function(long_genotype_config){
       ))
 }
 
-compute_hrj_unphased<-function(genotype_counts, window_size, allele_count_to_analyze){
+compute_hrj_unphased<-function(genotype_counts_path, window_size, allele_count_to_analyze){
   
+  genotype_counts <- read_csv(genotype_counts_path) 
   long_genotype_configuration <- gather(genotype_counts, `0/0,0/0` ,`0/0,0/1` ,`0/1,0/0`, `0/1,0/1`,`0/0,1/1` ,`1/1,0/0` ,`1/1,1/1`  , `1/1,0/1`, `0/1,1/1` , 
                                         value="count", 
                                         key="genotype")
@@ -35,8 +36,9 @@ compute_hrj_unphased<-function(genotype_counts, window_size, allele_count_to_ana
 }
 
 
+
+
+
 ## Example 
-high_coverage_hg38_genotype_counts <- read_csv("masked_high_coverage_hg38_genotype_counts.csv") 
+high_coverage_hg38_genotype_counts <- "masked_high_coverage_hg38_genotype_counts.csv"
 highcoverage_hg38_doubletons_hr <- compute_hrj_unphased(high_coverage_hg38_genotype_counts  , window_size = 1500, allele_count_to_analyze = 2)
-
-
