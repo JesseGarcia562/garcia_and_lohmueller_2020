@@ -1,0 +1,4601 @@
+recombination_rate,seed,genome_length,dominance_coefficient,script
+1e-09,45354,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(45354);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_45354_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,29215,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(29215);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_29215_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,30976,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(30976);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_30976_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,62823,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(62823);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_62823_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,62129,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(62129);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_62129_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,27686,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(27686);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_27686_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,17340,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(17340);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_17340_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,51105,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(51105);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_51105_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,86123,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(86123);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_86123_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-09,29358,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(29358);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-09);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-09_seed_29358_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,49937,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(49937);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_49937_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,63457,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(63457);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_63457_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,23694,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(23694);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_23694_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,53726,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(53726);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_53726_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,54749,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(54749);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_54749_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,63229,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(63229);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_63229_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,59679,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(59679);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_59679_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,11940,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(11940);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_11940_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,22150,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(22150);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_22150_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-08,73582,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(73582);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-08);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-08_seed_73582_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,55743,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(55743);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_55743_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,69266,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(69266);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_69266_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,18107,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(18107);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_18107_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,35803,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(35803);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_35803_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,85971,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(85971);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_85971_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,55239,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(55239);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_55239_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,20680,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(20680);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_20680_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,31116,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(31116);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_31116_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,88213,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(88213);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_88213_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-07,42660,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(42660);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-07);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-07_seed_42660_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,79569,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(79569);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_79569_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,89166,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(89166);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_89166_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,19908,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(19908);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_19908_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,8981,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(8981);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_8981_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,18216,5e+06,0,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(18216);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_18216_genomeLength_5e+06_gravel_NoMigration_0_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,36712,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(36712);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_36712_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,75321,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(75321);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_75321_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,52518,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(52518);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_52518_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,36142,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(36142);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_36142_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
+1e-06,24892,5e+06,0.5,"/u/home/j/jessegar/slim_build/slim <<SLIMSCRIPTHERE
+
+initialize() {
+   setSeed(24892);
+
+	 // one recombination rate
+	 initializeRecombinationRate(1e-06);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < 5e+06) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+1 { sim.addSubpop('p1', 10000); }
+
+
+
+1: late() {
+
+
+if (sim.generation % 10 == 0) { cat(sim.generation + '\n'); }
+
+
+if (sim.generation == 1e+05) { 
+
+cat('VCFOutput START' + '\n');
+
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F);
+
+
+
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F, filePath='/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/dfe_simulations_constant_pop/recomb_1e-06_seed_24892_genomeLength_5e+06_gravel_NoMigration_0.5_dfe_Selection.vcf');
+
+
+
+
+cat('VCFOutput END');
+
+
+ sim.simulationFinished(); }
+
+
+ }
+
+
+
+2000000 {
+
+
+sim.simulationFinished();
+
+
+
+} 
+SLIMSCRIPTHERE"
