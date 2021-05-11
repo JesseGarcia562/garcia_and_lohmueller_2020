@@ -1,0 +1,467 @@
+---
+title: "Creating_DF_For_Second_round_of_revisions"
+author: "Jesse Garcia"
+date: "5/10/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(glue)
+library(reticulate)
+
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+
+
+
+generateSlimScriptMigration<-function(recombinationRate, genomeLength,seed, vcfOutpath){
+  
+  #We have to remove comments here for glue to work...Actually! We can put them at the end of a line but can't start with them 
+  slimScript<-"
+
+initialize() {
+   setSeed(<<seed>>);
+
+	 // one recombination rate
+	 initializeRecombinationRate(<<recombinationRate>>);
+
+
+    initializeMutationRate(1.5e-8);
+	
+	//nonsynonymous drawn from a DFE from Kim et al.
+	// importantly, SLiM computes the fitness of the heterozygote and homozygote as 1+sh and 1+s
+	// dadi and others compute it as 1+2sh and 1+2s
+	initializeMutationType('m1',0.5, 'g', -0.01314833,  0.186);
+
+
+	//synonymous -- assumed neutral here
+	initializeMutationType('m2', 0.5, 'f', 0.0);
+	//noncoding -- assumed neutral here
+	initializeMutationType('m3', 0.5, 'f', 0.0);
+
+
+	//genomic element: exon and uses a mixture of syn and nonsyn at a 1:2.31 ratio (Huber et al.)
+	initializeGenomicElementType('g1', c(m2,m1), c(1.0,2.31));
+	//genomic element: intron
+	initializeGenomicElementType('g2', c(m3), c(1.0));
+	//genomic element: intergenic
+	initializeGenomicElementType('g3', c(m3), c(1.0));	
+	
+	// Generate random genes along approximately 100kb
+	base = 0;
+	
+	while (base < <<genomeLength>>) {
+		//make first noncoding
+		nc_length = asInteger(runif(1, 100, 5000));
+		initializeGenomicElement(g3, base, base + nc_length - 1);
+		base = base + nc_length;
+		
+		//make first exon
+		ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+		initializeGenomicElement(g1, base, base + ex_length - 1);
+		base = base + ex_length;
+		
+		//make additional intron-exon pairs
+		do
+		{
+			in_length = asInteger(rlnorm(1, log(100), log(1.5))) + 10;
+			initializeGenomicElement(g2, base, base + in_length - 1);
+			base = base + in_length;
+			
+			ex_length = asInteger(rlnorm(1, log(50), log(2))) + 1;
+			initializeGenomicElement(g1, base, base + ex_length - 1);
+			base = base + ex_length;
+		}
+		while (runif(1) < 0.8); //20% probability of stopping
+	}
+	
+	nc_length = asInteger(runif(1, 100, 5000));
+	initializeGenomicElement(g3, base, base + nc_length - 1);
+	
+
+
+
+
+
+}
+
+
+
+
+// Create the ancestral African population
+1 { sim.addSubpop('p1', 7310);
+}
+
+// Expand the African population to 14474
+// This occurs 148000 years (5920) generations ago
+52080 { p1.setSubpopulationSize(14474);}
+
+// Split non-Africans from Africans and set up migration between them
+// This occurs 51000 years (2040 generations) ago
+55960 {
+  sim.addSubpopSplit('p2', 1861, p1);
+p1.setMigrationRates(c(p2), c(15e-5));
+p2.setMigrationRates(c(p1), c(15e-5));
+}
+// Split p2 into European and East Asian subpopulations
+// This occurs 23000 years (920 generations) ago
+57080 {
+  sim.addSubpopSplit('p3', 554, p2);
+  p2.setSubpopulationSize(1032); // reduce European size
+  // Set migration rates for the rest of the simulation
+p1.setMigrationRates(c(p2, p3), c(2.5e-5, 0.78e-5));
+p2.setMigrationRates(c(p1, p3), c(2.5e-5, 3.11e-5));
+p3.setMigrationRates(c(p1, p2), c(0.78e-5, 3.11e-5));
+  
+}
+// Set up exponential growth in Europe and East Asia
+// Where N(0) is the base subpopulation size and t = gen - 57080:
+  // N(Europe) should be int(round(N(0) * e^(0.0038*t)))
+// N(East Asia) should be int(round(N(0) * e^(0.0048*t)))
+57080:58000 {
+  t = sim.generation - 57080;
+  p2_size = round(1032 * exp(0.0038 * t));
+  p3_size = round(554 * exp(0.0048 * t));
+  p2.setSubpopulationSize(asInteger(p2_size));
+  p3.setSubpopulationSize(asInteger(p3_size));
+}
+
+
+58000 late () {
+p1.outputVCFSample(sampleSize=50, outputMultiallelics = F , filePath='<<vcfOutpath>>');
+sim.simulationFinished();
+}
+
+"
+
+slimScript<-glue::glue(slimScript,.open = "<<", .close = ">>")
+
+return(slimScript)
+}
+
+writeSlimScript<-function(slimScript,outpath){
+  readr::write_file(slimScript,path=outpath)
+  
+  invisible(outpath)
+}
+makeSlimScriptPipeCommand<-function(slimScript, slimPath="slim", hereDocument="SLIMSCRIPTHERE"){
+  
+  
+  
+}
+runSlimScript<-function(slimScriptInpath){
+  slimOutput<-system(glue::glue("slim {slimScriptInpath}"), intern = T)
+  slimOutput<-paste(slimOutput,collapse = "\n")
+  return(slimOutput)
+}
+generateHereDocumentedScript<-function(slimScript, hereDocumentTag="SLIMSCRIPTHERE"){
+  
+  slimScriptVector<-read_lines(slimScript)
+  slimScriptVector<-append(slimScriptVector, values=hereDocumentTag, after = 0)
+  slimScriptVector<-append(slimScriptVector, values = hereDocumentTag, after=length(slimScriptVector))
+  hereDocumentedScript<-glue::glue_collapse(slimScriptVector, sep="\n")
+  return(hereDocumentedScript)
+}
+generateBashCommandWithHereDocumentedScript<-function(hereDocumentedScript, slimPath="slim"){
+  hereDocmentedVector<-readr::read_lines(hereDocumentedScript)
+  hereDocumentTag<-hereDocmentedVector[1]
+  testthat::expect_equal(hereDocumentTag, hereDocmentedVector[length(hereDocmentedVector)] ,info="You did not input a here documented slim script. The first line is not the same as the last. ")
+  
+  
+  redirection<-glue::glue("{slimPath} <<{hereDocumentTag}")
+  hereDocmentedVector[1]<-redirection
+  bashCommand<-glue::glue_collapse(hereDocmentedVector, sep="\n")
+  return(bashCommand)
+}
+getVCFOutputStart<-function(slimOutput, vcfOutputStartPattern="VCFOutput START"){
+  vcfOutputStart<-slimOutput %>%
+    str_detect(pattern=vcfOutputStartPattern) %>%
+    which() 
+  
+  assertthat::are_equal(1, length(vcfOutputStart))
+  
+  return(vcfOutputStart)
+  
+}
+getVCFOutputEnd<-function(slimOutput, vcfOutputEndPattern="VCFOutput END"){
+  vcfOutputEnd<-slimOutput %>%
+    str_detect(pattern=vcfOutputEndPattern) %>%
+    which() 
+  
+  assertthat::are_equal(1, length(vcfOutputEnd))
+  
+  return(vcfOutputEnd)
+  
+}
+getVCFHeader<-function(slimOutput, vcfHeaderPattern="#CHROM"){
+  vcfHeader<-slimOutput %>%
+    str_detect(pattern=vcfHeaderPattern) %>%
+    which() 
+  
+  assertthat::are_equal(1, length(vcfHeaderPattern))
+  
+  return(vcfHeader)
+  
+  
+}
+compute.ld <- function( haps, focus.i = 1:nrow(haps), variant.names = rownames( haps ) ) {
+  # haps is a 0-1 matrix with L SNPs (in rows) and N haplotypes (in columns).
+  # Since the values are 0, 1, we rely on the fact that a*b=1 iff a and b are 1.
+  # assume focus.i contains l values in range 1..L
+  L = nrow( haps )
+  l = length( focus.i )
+  # p11 = lxL matrix.  i,jth entry is probability of 11 haplotype for ith focal SNP against jth SNP.
+  focus.hap = haps[ focus.i, , drop = FALSE ]
+  p11 <- ( focus.hap %*% t( haps )) / ncol( haps )
+  # p1. = lxL matrix.  ith row is filled with the frequency of ith focal SNP.
+  p1. <- matrix( rep( rowSums( focus.hap ) / ncol( haps ), L ), length( focus.i ), L, byrow = FALSE )
+  # p.1 = lxL matrix.  jth column is filled with the frequency of jth SNP.
+  frequency = rowSums( haps ) / ncol( haps )
+  p.1 <- matrix( rep( frequency, length( focus.i ) ), length( focus.i ), L, byrow = TRUE )
+  
+  # Compute D
+  D <- p11 - p1. * p.1
+  
+  # Compute D'
+  denominator = pmin( p1.*(1-p.1), (1-p1.)*p.1 )
+  wNeg = (D < 0)
+  denominator[ wNeg ] = pmin( p1.*p.1, (1-p1.)*(1-p.1) )[wNeg]
+  denominator[ denominator == 0 ] = NA
+  Dprime = D / denominator 
+  
+  # Compute correlation, this result should agree with cor( t(haps ))
+  R = D / sqrt( p1. * ( 1 - p1. ) * p.1 * ( 1 - p.1 ))
+  R[ frequency[ focus.i ] == 0 | frequency[ focus.i ] == 1, frequency == 0 | frequency == 1 ] = NA
+  if( !is.null( variant.names )) {
+    rownames( D ) = rownames( Dprime ) = rownames( R ) = variant.names[ focus.i ]
+    colnames( D ) = colnames( Dprime ) = colnames( R ) = variant.names
+    names( frequency ) = variant.names
+  }
+  
+  return( list( D = D, Dprime = Dprime, frequency = frequency, R = R ) ) 
+}
+
+
+frequencyFilteredLD<-function(VCF,distanceLimit=10000){
+  
+  SNPS<-VCF$POS
+  
+  Variation<-VCF$Variation[1]
+  #IF only ONE Snp in this AC Category, return NULL
+  if(length(SNPS) == 1){
+    return(as_tibble(NULL))
+  }
+  
+  #Calculate the comparisons that could be made.
+  Comparisons<-combn(SNPS,2, simplify = TRUE)
+  
+  #Applying Distance Filter
+  distances<-diff(Comparisons)
+  Comparisons<- Comparisons[,abs(distances) < distanceLimit]
+  
+  
+  AC=VCF$AC[1]
+  #Removing AC Column
+  VCF$AC<-NULL
+  
+  calculateLD<-function(Comparisons){
+    
+    pos1 = Comparisons[1]
+    pos2 = Comparisons[2]
+    
+    
+    
+    gen1 = t(VCF[VCF$POS == pos1,][-c(1:7)])
+    gen2 = t(VCF[VCF$POS == pos2,][-c(1:7)])
+    
+    # Get total number of alleles. Since Humans are diploids, multiply genotypes by 2
+    total_alleles = nrow(gen1) * 2
+    #Getting the count of the reference Alleles. 
+    p_count = sum(str_count(gen1, "0"))
+    q_count = sum(str_count(gen2, "0"))
+    
+    if (sum(str_count(gen1, fixed("..")) > 0) | sum(str_count(gen2, fixed("..")) > 0)){
+      stop("Remove all uncallable variants and rerun analysis.")
+    }
+    
+    if (p_count != q_count) {
+      cat(pos1, "Has an allele frequency of ", p_count, pos2, " Has an allele frequency of ", q_count)
+      stop("Your variants are not filtered by Allele count")
+    }
+    
+    #Should not be happening in my data. Could happen in unfiltered Data
+    if (total_alleles == 0){
+      Dr = NA
+      r2 = NA
+      D_matrix[as.character(pos1), as.character(pos2)] = NA
+      r_matrix[as.character(pos1), as.character(pos2)] = NA
+    }
+    
+    #Getting the allele frequencies. p1 and q1 are Reference Alleles. 
+    p1 = p_count / total_alleles
+    p2 = 1 - p1
+    q1 = q_count / total_alleles
+    q2 = 1 - q1
+    
+    
+    # Get observed genotypes. First split genotypes into Haplotypes
+    gen1Split<-str_split_fixed(gen1, "\\|",2)
+    colnames(gen1Split)<-c("Haplo1", "Haplo2")
+    gen2Split<-str_split_fixed(gen2, "\\|",2)
+    colnames(gen2Split)<-c("Haplo1", "Haplo2")
+    #Recombine Haplotypes. Each haplotype1 element refers to the binary decision if Variant1 and Variant 2 Exist at Position1 and Position2 within 1 Individual on the left of the "|"
+    haplotype1<-paste(gen1Split[,"Haplo1"],gen2Split[,"Haplo1"], sep ="")
+    haplotype2<-paste(gen1Split[,"Haplo2"],gen2Split[,"Haplo2"], sep ="")
+    
+    gen_counts<-table(c(haplotype1, haplotype2))
+    
+    # Get expected genotypes counts
+    #0 Refers to Reference, 1 Refers to Alternate
+    exp_gen=c("00"=NA, "01"=NA, "10"=NA, "11"=NA)
+    exp_gen["00"] = p1 * q1 * total_alleles
+    exp_gen["01"] = p1 * q2 * total_alleles
+    exp_gen["10"] = p2 * q1 * total_alleles
+    exp_gen["11"] = p2 * q2 * total_alleles
+    
+    # Quantification of LD
+    # Frequencies of genotypes
+    freq_00 = gen_counts["00"] / total_alleles
+    freq_01 = gen_counts["01"] / total_alleles
+    freq_10 = gen_counts["10"] / total_alleles
+    freq_11 = gen_counts["11"] / total_alleles
+    
+    AB=gen_counts["11"]
+    Ab=gen_counts["10"]
+    aB=gen_counts["01"]
+    ab=gen_counts["00"]
+    #Often times a specific genotype is never observed. This means its frequency should be 0.
+    #However, because of the table function above, it causes the frequency to be NA. 
+    
+    fixZeroObserved <- function(observedFrequency){
+      if (is.na(observedFrequency)){
+        observedFrequency = 0
+      } else{
+        observedFrequency = observedFrequency
+      }
+      return(observedFrequency)
+    }
+    
+    freq_00=fixZeroObserved(freq_00)
+    freq_01=fixZeroObserved(freq_01)
+    freq_10=fixZeroObserved(freq_10)
+    freq_11=fixZeroObserved(freq_11)
+    
+    AB=fixZeroObserved(AB)
+    Ab=fixZeroObserved(Ab)
+    aB=fixZeroObserved(aB)
+    ab=fixZeroObserved(ab)
+    
+    
+    D = (freq_00*freq_11) - (freq_01*freq_10)
+    
+    
+    # Compute r2
+    
+    r2 = D^2 / (q1 * q2 * p1 * p2)
+    #Catching Divide by 0 errors
+    if(is.infinite(r2)){
+      r2=NA
+    }
+    
+    
+    
+    # Compute Dr (D')
+    if (D < 0) {
+      Dr = D / min(p1*q1, p2*q2)
+    } else {
+      Dr = D / min(p1*q2, p2*q1)
+    }
+    if(is.infinite(Dr)){
+      Dr=NA
+    }
+    
+    Distance=pos2-pos1
+    
+    
+    line<-c(POS1=pos1, POS2=pos2, DPrime=Dr, D=D, rSquare=r2, AB=AB, Ab=Ab, aB=aB, ab=ab, Distance=Distance, Variation=Variation, AC=AC)
+    
+  }
+  
+  #Checks if theres only two SNPS to calculate LD For, if so, then apply will NOT work. Need to just call the function calculateLD
+  if(is.null(ncol(Comparisons))) {
+    frequencyFilteredLD<-t(calculateLD(Comparisons)) 
+  } else if ( ncol(Comparisons) == 0 ){
+    #Sometimes No Comparisons can be Made. 
+    return(as_tibble(NULL) )
+  } else {
+    frequencyFilteredLD<-t(apply(Comparisons, MARGIN = 2, FUN = calculateLD))
+  }
+  
+  
+  
+  colnames(frequencyFilteredLD) <-c("POS1", "POS2", "DPrime", "D", "rSquare", "FreqAB","FreqAb", "FreqaB", "Freqab", "Distance", "Variation", "AC")
+  
+  return(as_tibble(frequencyFilteredLD))
+}
+
+
+writeCommandNoMigration<-function(recombinationRate, genomeLength, seed, vcfOutpath){
+  slimOutput<-generateSlimScriptNoMigration(recombinationRate, genomeLength,seed, vcfOutpath) %>%
+    generateHereDocumentedScript() %>%
+    generateBashCommandWithHereDocumentedScript(slimPath = "/u/home/j/jessegar/slim_build/slim") 
+  
+}
+
+
+writeCommandMigration<-function(recombinationRate, genomeLength, seed, vcfOutpath){
+  slimOutput<-generateSlimScriptMigration(recombinationRate, genomeLength,seed, vcfOutpath) %>%
+    generateHereDocumentedScript() %>%
+    generateBashCommandWithHereDocumentedScript(slimPath = "/u/home/j/jessegar/slim_build/slim") 
+  
+}
+
+#SGETaskID<-parse_integer(Sys.getenv("SGE_TASK_ID"))
+
+
+set.seed(1)
+recombinationRate<-c(1e-8, 1e-9)
+seed<-sample(10000:110000, size=2000, replace = F)
+genomeLength<-c(5000000)
+migration<-"YesMigration"
+
+path<-"/u/flashscratch/j/jessegar/SLiM_ParallelRProject/data/decomposeGravel/"
+
+simulationDf<-crossing(recombinationRate, seed, genomeLength, path,migration)
+
+
+
+
+simulationMigrationDf<-simulationDf %>%
+  mutate(migration="YesMigration") %>%
+  mutate(vcfOutpath=glue("{path}recomb_{recombinationRate}_seed_{seed}_genomeLength_{genomeLength}_gravel_{migration}_Selection.vcf")) %>%
+  select(-path, -migration)
+
+simulationMigrationDf$Script=pmap_chr(simulationMigrationDf, writeCommandMigration)
+
+
+number_of_sims<-nrow(simulationMigrationDf)
+
+#Randomize
+allGravelSimulations<-simulationMigrationDf %>%
+  sample_n(size=number_of_sims) %>%
+  write_rds("../data/gravelMigrationSimulations_revisions_2nd_May10.rds")
+
+cat(allGravelSimulations$Script[10])
+
+```
