@@ -89,9 +89,15 @@ annotated_genotypes %>%
   filter(allele_count == allele_count_to_analyze, !is.na(words), words ==.x)  %>%
       mutate(distance_breaks=cut_interval(distance, length=window_size)) %>%
   group_by(distance_breaks, variation_type, recombination_rate, words) %>%
-  summarise(mean_count=mean(count)) %>% 
-    ungroup() %>%
-  ggplot(aes(x=distance_breaks, y=mean_count, colour=variation_type, group=variation_type)) +
+  summarise(mean.count=mean(count),
+            sd.count = sd(count, na.rm = TRUE),
+    n.count = n()) %>%
+mutate(se.count = sd.count / sqrt(n.count),
+ lower.ci.count = mean.count - se.count,
+ upper.ci.count = mean.count + se.count) %>%
+          ungroup() %>%
+  ggplot(aes(x=distance_breaks, y=mean.count, colour=variation_type, group=variation_type)) +
+    geom_errorbar(aes(ymin=lower.ci.count, ymax=upper.ci.count), width=.2) +
   ylab(bquote('Mean '*H[R]^.(allele_count_to_analyze))) +
   labs( x="Physical distance (kbp)", colour="Variation") +
   geom_point(size=2) +
@@ -120,6 +126,24 @@ simulation_df <- read_rds("configuration_gravel_simulations_low_recomb_ac_1_2.rd
   )) %>%
   mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-09 )
 
+revisions_simulation_df <- read_rds("configuration_gravel_simulations_second_round_revisions_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+  mutate(distance=abs(pos_1-pos_2)) %>%
+  mutate(variation_type=case_when(
+    variation_type == 1 ~ "Nonsynonymous",
+    variation_type == 2 ~ "Synonymous"
+  )) %>%
+  mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-09 )
+
+revisions_simulation_second_df <- read_rds("configuration_gravel_simulations_second_round_revisions_second_simulations_low_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+  mutate(distance=abs(pos_1-pos_2)) %>%
+  mutate(variation_type=case_when(
+    variation_type == 1 ~ "Nonsynonymous",
+    variation_type == 2 ~ "Synonymous"
+  )) %>%
+  mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-09 )
+
+simulation_df <- bind_rows(simulation_df,revisions_simulation_df ,revisions_simulation_second_df)
+#simulation_df<- revisions_simulation_df
 long_simulation_df_genotype_config <- gather(simulation_df, 
                                  "0|0,0|0", "0|0,0|1", "1|0,0|0", "0|0,1|0", "0|1,0|0", "1|0,0|1", "1|0,1|0", "0|1,1|0", "0|1,0|1", "1|1,0|0" ,"0|0,1|1" ,"1|1,1|1" , 
                                  value="count", 
@@ -142,6 +166,24 @@ simulation_df <- read_rds("configuration_gravel_simulations_average_recomb_ac_1_
   )) %>%
   mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-08 )
 
+revisions_simulation_df <- read_rds("configuration_gravel_simulations_second_round_revisions_average_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+  mutate(distance=abs(pos_1-pos_2)) %>%
+  mutate(variation_type=case_when(
+    variation_type == 1 ~ "Nonsynonymous",
+    variation_type == 2 ~ "Synonymous"
+  )) %>%
+  mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-08 )
+
+revisions_simulation_second_df <- read_rds("configuration_gravel_simulations_second_round_revisions_second_simulations_average_recomb_ac_1_2.rds") %>% mutate_if(is.numeric, replace_na,  0) %>%
+  mutate(distance=abs(pos_1-pos_2)) %>%
+  mutate(variation_type=case_when(
+    variation_type == 1 ~ "Nonsynonymous",
+    variation_type == 2 ~ "Synonymous"
+  )) %>%
+  mutate(variation_type=as.factor(variation_type)) %>% filter(recombination_rate==1e-08 )
+
+simulation_df <- bind_rows(simulation_df,revisions_simulation_df,revisions_simulation_second_df )
+#simulation_df <- revisions_simulation_df
 long_simulation_df_genotype_config <- gather(simulation_df, 
                                  "0|0,0|0", "0|0,0|1", "1|0,0|0", "0|0,1|0", "0|1,0|0", "1|0,0|1", "1|0,1|0", "0|1,1|0", "0|1,0|1", "1|1,0|0" ,"0|0,1|1" ,"1|1,1|1" , 
                                  value="count", 
@@ -160,11 +202,11 @@ annotated_genotypes_recomb_1e8 <- long_simulation_df_genotype_config
 ## Simulations
 
 #Recombination 1e-09
-simulations_doubletons_hr_recomb_1e9 <- plot_rh_unphased(annotated_genotypes_recomb_1e9, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 2)[[3]]
-simulations_singletons_hr_recomb_1e9 <- plot_rh_unphased(annotated_genotypes_recomb_1e9, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 1)[[3]]
+simulations_doubletons_hr_recomb_1e9 <- plot_rh_unphased(annotated_genotypes_recomb_1e9, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 2)[[3]] + theme(text = element_text(size = 20)) 
+simulations_singletons_hr_recomb_1e9 <- plot_rh_unphased(annotated_genotypes_recomb_1e9, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 1)[[3]] + theme(text = element_text(size = 20)) 
 #Recombination 1e-08
-simulations_doubletons_hr_recomb_1e8 <- plot_rh_unphased(annotated_genotypes_recomb_1e8, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 2)[[3]]
-simulations_singletons_hr_recomb_1e8 <- plot_rh_unphased(annotated_genotypes_recomb_1e8, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 1)[[3]]
+simulations_doubletons_hr_recomb_1e8 <- plot_rh_unphased(annotated_genotypes_recomb_1e8, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 2)[[3]] + theme(text = element_text(size = 20)) 
+simulations_singletons_hr_recomb_1e8 <- plot_rh_unphased(annotated_genotypes_recomb_1e8, window_size = 1500, plot_type = "line_plot" , allele_count_to_analyze = 1)[[3]] + theme(text = element_text(size = 20)) 
 
 
 
@@ -194,5 +236,5 @@ labels = c('A', 'C', 'B', 'D'), label_size = 12, nrow=2, ncol=2)
 
 
 simulated_hr_plots<-plot_grid(hr_plots,legend_b, ncol=1, rel_heights = c(1, .1))
-
-ggsave(filename = "../figures/figure_2_simulated_hr_plots.tiff", width=20, height=12)
+simulated_hr_plots
+ggsave(filename = "figure_2_simulated_hr_plots.png", width=20, height=12)
