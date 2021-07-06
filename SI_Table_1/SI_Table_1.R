@@ -1,6 +1,6 @@
 library(tidyverse)
 library(glue)
-
+library(kableExtra)
 
 
 compute_d_prime<-function(ld_df){
@@ -50,21 +50,20 @@ df<-df %>% mutate(standard_error=formatC(standard_error, format="e", digits=2))
 
 
 pretty_df<-bind_cols( df %>% filter(Variation == "Nonsynonymous"), df %>% filter(Variation == "Synonymous")) %>%
-  select(-Variation, -Variation1, -AC_break1) %>%
-  select(AC_break, N, mean_d_prime, standard_error, N1, mean_d_prime1, standard_error1) %>%
-  rename(`Allele count`=AC_break, 
-         `Number of pairs` = N,
-         Mean = mean_d_prime, 
-         `Standard error` = standard_error, 
-         `Number of pairs` = N1,
-         Mean = mean_d_prime1,
-         `Standard error` = standard_error1)
+  select(-Variation...2, -Variation...7, -AC_break...6) %>%
+  select(AC_break...1, N...4, mean_d_prime...3, standard_error...5, N...9, mean_d_prime...8, standard_error...10) %>%
+  rename(`Allele count`=AC_break...1, 
+         `Number of pairs` = N...4,
+         Mean = mean_d_prime...3, 
+         `Standard error` = standard_error...5, 
+         `Number of pairs ` = N...9,
+         'Mean ' = mean_d_prime...8,
+         `Standard error ` = standard_error...10)
 
 kable(pretty_df, format = "latex", booktabs=T) %>% 
   add_header_above(c(" "=1 , "Nonsynonymous Pairs" =3, "Synonymous Pairs" = 3)) %>% 
   kable_styling(latex_options = c("striped"), full_width = T, font_size = 6 ) %>%
   as_image(file="table_high_frequency_ld_low_recomb.png")
-
 
 
 
@@ -98,18 +97,20 @@ df<-df %>% mutate(standard_error=formatC(standard_error, format="e", digits=2))
 
 
 
+
 pretty_df<-bind_cols( df %>% filter(Variation == "Nonsynonymous"), df %>% filter(Variation == "Synonymous")) %>%
-  select(-Variation, -Variation1, -AC_break1) %>%
-  select(AC_break, N, mean_d_prime, standard_error, N1, mean_d_prime1, standard_error1) %>%
-  rename(`Allele count`=AC_break, 
-         `Number of pairs` = N,
-         Mean = mean_d_prime, 
-         `Standard error` = standard_error, 
-         `Number of pairs` = N1,
-         Mean = mean_d_prime1,
-         `Standard error` = standard_error1)
+  select(-Variation...2, -Variation...7, -AC_break...6) %>%
+  select(AC_break...1, N...4, mean_d_prime...3, standard_error...5, N...9, mean_d_prime...8, standard_error...10) %>%
+  rename(`Allele count`=AC_break...1, 
+         `Number of pairs` = N...4,
+         Mean = mean_d_prime...3, 
+         `Standard error` = standard_error...5, 
+         `Number of pairs ` = N...9,
+         'Mean ' = mean_d_prime...8,
+         `Standard error ` = standard_error...10)
 
 kable(pretty_df, format = "latex", booktabs=T) %>% 
   add_header_above(c(" "=1 , "Nonsynonymous Pairs" =3, "Synonymous Pairs" = 3)) %>% 
   kable_styling(latex_options = c("striped"), full_width = T, font_size = 6 ) %>%
   as_image(file="table_high_frequency_ld_avg_recomb.png")
+
